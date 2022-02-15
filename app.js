@@ -1,7 +1,9 @@
-const express = require("express");
+//jshint esversion:6
 
+const express = require("express");
 // body-parser is deprecated in latest node, use urlencoded extended tru and express.json
 // const bodyParser = require("body-parser");
+const date = require(__dirname + "/date.js");
 
 const app = express();
 
@@ -11,30 +13,26 @@ app.use(express.json());
 app.use(express.static("public"));
 // app.use(express.static(__dirname + "/public/")) //resource from another location
 // app.use("view engine", "ejs");
-app.set("view engine", "ejs");
+app.set('view engine', 'ejs');
 
 const port = process.env.PORT || 3000;
 
-// let items = [];
-let items = ["Buy Food", "Cook Food", "Eat Food"];
-let workItems = [];
 
-app.get("/", function (req, res) {
-  let today = new Date();
+const items = ["Buy Food", "Cook Food", "Eat Food"];
+const workItems = [];
 
-  let options = {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  };
+app.get("/", function(req, res) {
 
-  let day = today.toLocaleDateString("en-US", options);
+const day = date.getDate();
 
-  res.render("list", { listTitle: day, listItems: items });
+  res.render("list", {listTitle: day, newListItems: items});
+
 });
 
-app.post("/", function (req, res) {
-  let item = req.body.newItem;
+app.post("/", function(req, res){
+
+  const item = req.body.newItem;
+
   if (req.body.list === "Work") {
     workItems.push(item);
     res.redirect("/work");
@@ -44,19 +42,14 @@ app.post("/", function (req, res) {
   }
 });
 
-app.listen(port, function () {
-  console.log("Server started on port " + port);
+app.get("/work", function(req,res){
+  res.render("list", {listTitle: "Work List", newListItems: workItems});
 });
 
-app.get("/work", function (req, res) {
-  res.render("list", { listTitle: "Work List", listItems: workItems });
-});
-
-app.get("/about", function (req, res) {
+app.get("/about", function(req, res){
   res.render("about");
 });
 
-app.post("/work", function (req, res) {
-  workItems.push(req.body.newItem);
-  res.redirect("/work");
-});
+app.listen(port, function () {
+    console.log("Server started on port " + port);
+  });
