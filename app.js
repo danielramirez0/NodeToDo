@@ -1,4 +1,5 @@
 //jshint esversion:6
+require("dotenv").config()
 const mongoose = require("mongoose");
 const _ = require("lodash");
 const express = require("express");
@@ -18,7 +19,8 @@ app.set("view engine", "ejs");
 
 const port = process.env.PORT || 3000;
 
-mongoose.connect("mongodb://localhost:27017/todolistDB");
+// mongoose.connect("mongodb://localhost:27017/todolistDB");
+mongoose.connect(process.env.MONGO_CONNECTION);
 
 const itemsSchema = {
   name: String,
